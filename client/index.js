@@ -28,12 +28,15 @@ async function getPaymentLink (){
 window.addEventListener("growWalletChange", (result) => {
     console.log("result:", result.detail);
     let res = result.detail;
-    if (res.status === 1) {
+    if (res.status === 1) { //res.status === 1 it means that the payment was made successfully
       resultStatus = true;
       resultData = res.data;
     }
     if (res.state === "close" && resultStatus) {
-      console.log(resultData) //or display success page whith resultData
+      // Now you can access the success page, and also send data to it via the URL
+      console.log(resultData);
+      const searchParams = new URLSearchParams(resultData);      
+      window.open(`http://localhost:4200/client/success.html?${searchParams.toString()}`)
     }
   });
 

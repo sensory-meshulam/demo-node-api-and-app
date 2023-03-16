@@ -26,11 +26,6 @@ app.post('/api/payment/getPaymentLink', async (req, res) => {
     paymentNum: paymentsNum.toString(),
     description: description,
     transactionTypes: ['1', '6', '13', '14'], //[Credit, Bit, ApplePay, GooglePay] If you don't need one of them, give it a value of '1'
-    cField1: 'blabla',
-    cField2: 'blabla',
-    cField3: MESHULAM_PAGE_CODE,
-    cField4: 'blabla',
-    cField5: 'blabla'
   };
   
   const form = new FormData();
@@ -61,70 +56,6 @@ for (const [key, value] of Object.entries(formData)) {
     res.sendStatus(500);
   }
 });
-
-async function ConfirmPayment(req) {
-  if (req.status === "1") {
-    // you can save req.data in DB
-  }
-
-  return await ApproveTransaction(req);
-}
-
-async function ApproveTransaction(details) {
-  const formData = {
-    apiKey: MESHULAM_API_KEY,
-    pageCode: details.data.customFields.cField3,
-    transactionId: details.data.transactionId.toString(),
-    transactionToken: details.data.transactionToken,
-    transactionTypeId: details.data.transactionTypeId,
-    paymentType: details.data.paymentType,
-    processId: details.data.processId.toString(),
-    sum: details.data.sum,
-    firstPaymentSum: details.data.firstPaymentSum,
-    periodicalPaymentSum: details.data.periodicalPaymentSum,
-    paymentsNum: details.data.paymentsNum,
-    allPaymentsNum: details.data.allPaymentsNum,
-    paymentDate: details.data.paymentDate,
-    asmachta: details.data.asmachta,
-    description: details.data.description,
-    fullName: details.data.fullName,
-    payerPhone: details.data.payerPhone,
-    payerEmail: details.data.payerEmail || "",
-    cardSuffix: details.data.cardSuffix,
-    cardType: details.data.cardType,
-    cardTypeCode: details.data.cardTypeCode,
-    cardBrand: details.data.cardBrand,
-    cardBrandCode: details.data.cardBrandCode,
-    cardExp: details.data.cardExp,
-    processToken: details.data.processToken
-  };
-
-  const config = {
-    headers: { 'content-type': 'multipart/form-data' }
-  };
-
-  for (const [key, value] of Object.entries(formData)) {
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        form.append(`${key}[]`, item);
-      }
-    } else {
-      form.append(key, value);
-    }
-  }
-
-  try {
-    const response = await axios.post(MESHULAM_API_URL + "approveTransaction", form, config);
-    const res = response.data;
-    if (res.err && res.err.message) {
-      // display error message
-    }
-    return res.status === 1;
-  } catch (error) {
-    // handle error
-  }
-}
-
 
 app.listen(PORT, (error) =>{
   if(!error)
